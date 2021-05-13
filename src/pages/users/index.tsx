@@ -11,8 +11,10 @@ import {
     Icon,
     Box,
     Flex,
-    Heading
+    Heading,
+    useBreakpointValue
 } from "@chakra-ui/react"
+import Link from "next/link"
 import { RiAddLine, RiPencilLine } from "react-icons/ri"
 
 import { Header } from "../../components/Header"
@@ -20,6 +22,11 @@ import { Pagination } from "../../components/Pagination"
 import { Sidebar } from "../../components/Sidebar"
 
 export default function Userlist() {
+    const isWiderVersion = useBreakpointValue({
+        base: false,
+        lg: true
+    })
+
     return (
         <Box>
             <Header />
@@ -37,31 +44,33 @@ export default function Userlist() {
                     <Flex mb='8' justify='space-between' align='center'>
                         <Heading size="lg" fontWeight='normal'>Usuários</Heading>
 
-                        <Button
-                            as="a"
-                            size='sm'
-                            fontSize='small'
-                            colorScheme='pink'
-                            leftIcon={<Icon as={RiAddLine} fontSize='20' />}
-                        >
-                            Criar novo usuário
-                        </Button>
+                        <Link href="/users/create" passHref>
+                            <Button
+                                as="a"
+                                size='sm'
+                                fontSize='small'
+                                colorScheme='pink'
+                                leftIcon={<Icon as={RiAddLine} fontSize='20' />}
+                            >
+                                Criar novo usuário
+                            </Button>
+                        </Link>
                     </Flex>
 
-                    <Table colorScheme="whiteAlpha">
+                    <Table colorScheme="whiteAlpha" >
                         <Thead>
                             <Tr>
                                 <Th px='6' color='gray.300' w='8'>
                                     <Checkbox color='pink' />
                                 </Th>
                                 <Th>Usuário</Th>
-                                <Th>Data de cadastro</Th>
+                                {isWiderVersion && <Th>Data de cadastro</Th>}
                                 <Th width='8'></Th>
                             </Tr>
                         </Thead>
                         <Tbody>
                             <Tr>
-                                <Td px='6'>
+                                <Td px={['4', '4', '6']}>
                                     <Checkbox color='pink' />
                                 </Td>
                                 <Td>
@@ -70,7 +79,7 @@ export default function Userlist() {
                                         <Text fontSize='sm' color='gray.300'>rehemdev@gamil.com</Text>
                                     </Box>
                                 </Td>
-                                <Td> 07 de Maio de 2021</Td>
+                                {isWiderVersion && <Td> 07 de Maio de 2021</Td>}
                                 <Td>
                                     <Button
                                         as="a"
