@@ -1,9 +1,20 @@
-import { Button } from "@chakra-ui/button"
-import { Checkbox } from "@chakra-ui/checkbox"
-import Icon from "@chakra-ui/icon"
-import { Box, Flex, Heading } from "@chakra-ui/layout"
-import { Table, Tbody, Td, Th, Thead, Tr, Text } from "@chakra-ui/react"
+import {
+    Table,
+    Tbody,
+    Td,
+    Th,
+    Thead,
+    Tr,
+    Text,
+    Button,
+    Checkbox,
+    Icon,
+    Box,
+    Flex,
+    Heading
+} from "@chakra-ui/react"
 import { RiAddLine, RiPencilLine } from "react-icons/ri"
+
 import { Header } from "../../components/Header"
 import { Pagination } from "../../components/Pagination"
 import { Sidebar } from "../../components/Sidebar"
@@ -56,7 +67,7 @@ export default function Userlist() {
                                 <Td>
                                     <Box>
                                         <Text fontWeight='bold'>Jonathan Rehem</Text>
-                                        <Text fonstSize='sm' color='gray.300'>rehemdev@gamil.com</Text>
+                                        <Text fontSize='sm' color='gray.300'>rehemdev@gamil.com</Text>
                                     </Box>
                                 </Td>
                                 <Td> 07 de Maio de 2021</Td>
