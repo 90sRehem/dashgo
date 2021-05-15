@@ -13,43 +13,39 @@ import {
     Flex,
     Heading,
     useBreakpointValue,
-    Spinner
+    Spinner,
+    Link
 } from "@chakra-ui/react"
-import Link from "next/link"
+import NextLink from "next/link"
+import { useState } from "react"
 import { RiAddLine, RiPencilLine } from "react-icons/ri"
-import { useQuery } from 'react-query'
 
 import { Header } from "../../components/Header"
 import { Pagination } from "../../components/Pagination"
 import { Sidebar } from "../../components/Sidebar"
+import { api } from "../../services/api"
 
-const FIVE_SECONDS = 1000 * 5;
+import { useUsers } from "../../services/hooks/useUser"
+import { queryClient } from "../../services/queryClient"
 
 export default function Userlist() {
-    const { data, isLoading, error } = useQuery('users', async () => {
-        const response = await fetch('http://localhost:3000/api/users')
-        const data = await response.json()
-
-        const users = data.users.map(user => ({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            createdAt: new Date(user.createdAt).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-            })
-        }))
-
-        return users
-    }, {
-        staleTime: FIVE_SECONDS,
-    })
+    const [page, setPage] = useState(1);
+    const { data, isLoading, isFetching, error } = useUsers(page)
 
     const isWiderVersion = useBreakpointValue({
         base: false,
         lg: true
     })
+
+    async function handlePrefetchUser(userId: string) {
+        await queryClient.prefetchQuery(['user', userId], async () => {
+            const response = await api.get(`users/${userId}`)
+
+            return response.data
+        }, {
+            staleTime: 1000 * 60 * 10
+        })
+    }
 
     return (
         <Box>
@@ -59,16 +55,20 @@ export default function Userlist() {
                 w="100%"
                 my='6'
                 maxWidth={1480}
-                mx='auto
-                ' px='6'
+                mx='auto'
+                px='6'
             >
                 <Sidebar />
 
                 <Box flex='1' borderRadius={8} bg="gray.800" p="8">
                     <Flex mb='8' justify='space-between' align='center'>
-                        <Heading size="lg" fontWeight='normal'>Usuários</Heading>
+                        <Heading size="lg" fontWeight='normal'>
+                            Usuários
+                            {!isLoading && isFetching &&
+                                <Spinner size='sm' color='500.gray' ml='4' />}
+                        </Heading>
 
-                        <Link href="/users/create" passHref>
+                        <NextLink href="/users/create" passHref>
                             <Button
                                 as="a"
                                 size='sm'
@@ -78,7 +78,7 @@ export default function Userlist() {
                             >
                                 Criar novo usuário
                             </Button>
-                        </Link>
+                        </NextLink>
                     </Flex>
 
                     {isLoading ? (
@@ -103,7 +103,7 @@ export default function Userlist() {
                                     </Tr>
                                 </Thead>
                                 <Tbody>
-                                    {data.map(user => {
+                                    {data.users.map(user => {
                                         return (
                                             <Tr key={user.id}>
                                                 <Td px={['4', '4', '6']}>
@@ -111,7 +111,9 @@ export default function Userlist() {
                                                 </Td>
                                                 <Td>
                                                     <Box>
-                                                        <Text fontWeight='bold'>{user.name}</Text>
+                                                        <Link color='purple.400' onMouseEnter={() => handlePrefetchUser(user.id)}>
+                                                            <Text fontWeight='bold'>{user.name}</Text>
+                                                        </Link>
                                                         <Text fontSize='sm' color='gray.300'>{user.email}</Text>
                                                     </Box>
                                                 </Td>
@@ -133,7 +135,11 @@ export default function Userlist() {
                                 </Tbody>
                             </Table>
 
-                            <Pagination />
+                            <Pagination
+                                totalCountOfRegisters={data.totalCount}
+                                currentPage={page}
+                                onPageChange={setPage}
+                            />
                         </>
                     )}
                 </Box>
