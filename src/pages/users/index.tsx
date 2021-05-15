@@ -16,6 +16,7 @@ import {
     Spinner,
     Link
 } from "@chakra-ui/react"
+import { GetServerSideProps } from "next"
 import NextLink from "next/link"
 import { useState } from "react"
 import { RiAddLine, RiPencilLine } from "react-icons/ri"
@@ -25,12 +26,14 @@ import { Pagination } from "../../components/Pagination"
 import { Sidebar } from "../../components/Sidebar"
 import { api } from "../../services/api"
 
-import { useUsers } from "../../services/hooks/useUser"
+import { getUsers, useUsers } from "../../services/hooks/useUser"
 import { queryClient } from "../../services/queryClient"
 
-export default function Userlist() {
+export default function Userlist({ users }) {
     const [page, setPage] = useState(1);
-    const { data, isLoading, isFetching, error } = useUsers(page)
+    const { data, isLoading, isFetching, error } = useUsers(page, {
+        initialData: users,
+    })
 
     const isWiderVersion = useBreakpointValue({
         base: false,
@@ -146,4 +149,13 @@ export default function Userlist() {
             </Flex>
         </Box>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const { users, totalCount } = await getUsers(1)
+    return {
+        props: {
+            users,
+        }
+    }
 }
