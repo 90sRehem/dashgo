@@ -34,6 +34,7 @@ export default function Userlist({ users }) {
     const { data, isLoading, isFetching, error } = useUsers(page, {
         initialData: users,
     })
+    console.log(data);
 
     const isWiderVersion = useBreakpointValue({
         base: false,
@@ -151,11 +152,11 @@ export default function Userlist({ users }) {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    const { users, totalCount } = await getUsers(1)
-    return {
-        props: {
-            users,
-        }
-    }
-}
+// export const getServerSideProps: GetServerSideProps = async () => {
+//     const { users, totalCount } = await getUsers(1)
+//     return {
+//         props: {
+//             users,
+//         }
+//     }
+// }
